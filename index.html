@@ -1,793 +1,101 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quiz Gamer – Artrite Psoriásica</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
-
-<style>
-:root {
-    /* Paleta base */
-    --cream: #ede4d6;
-    --beige: #d7c8a9;
-    --terra: #cba789;
-    --green-soft: #a2b597;
-    --green-strong: #6e8d6a;
-    --red-soft: #d15c5c;
-
-    /* Gamer neon */
-    --neon-cyan: #3ef6ff;
-    --neon-purple: #b57cff;
-    --hud-bg: rgba(12, 20, 30, 0.92);
-}
-
-/* RESET */
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: "Montserrat", sans-serif;
-}
-
-/* FUNDO ANIMADO */
-body {
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-image: url('background.jpg');
-    background-size: cover;
-    background-position: center;
-    position: relative;
-}
-
-/* imagem de fundo (sua imagem) */
-body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    background-image: url('background.jpg');
-    background-size: cover;
-    background-position: center;
-    background: rgba(0,0,0,0.6);
-    transform: scale(1.05);
-    z-index: -99;
-}
-
-/* overlay gamer */
-body::after {
-    content: "";
-    position: fixed;
-    inset: 0;
-    mix-blend-mode: soft-light;
-    animation: bgMove 22s infinite alternate ease-in-out;
-    z-index: -2;
-}
-
-@keyframes bgMove {
-    from { transform: translate3d(-10px, -10px, 0); }
-    to   { transform: translate3d(10px, 10px, 0); }
-}
-
-/* PARTÍCULAS (efeito gamer) */
-.particle {
-    position: fixed;
-    width: 2px;
-    height: 30px;
-    background: linear-gradient(to bottom, rgba(255,255,255,0.9), rgba(255,255,255,0.9));
-    opacity: 0.7;
-    animation: rain 6s linear infinite;
-    z-index: -1;
-}
-@keyframes rain {
-    0% { transform: translateY(-40px); }
-    100% { transform: translateY(110vh); }
-}
-
-/* CARD PRINCIPAL (HUD GAMER) */
-
-    .game {
-    width: 100%;
-    max-width: 560px;
-    padding: 1rem;
-    border-radius: 22px;
-    background: url('background.jpg');
-    background-position: center;
-    /* background: url('background.jpg') center/cover no-repeat; */
-    color: #f4f4f4; /* texto fica claro e visível */
-    position: relative;
-    isolation: isolate; /* garante que o overlay fique atrás */
-}
-
-
-.game::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: rgba(0,0,0,0.3); /* ESCURECE O FUNDO */
-    border-radius: 22px;
-    z-index: -1;
-}
-
-/* TELAS (transição) */
-.screen {
-    opacity: 0;
-    pointer-events: none;
-    transform: translateY(16px);
-    transition: opacity .4s ease, transform .4s ease;
-}
-.screen.active {
-    opacity: 1;
-    pointer-events: auto;
-    transform: translateY(0);
-}
-
-h1 {
-    text-align: center;
-    font-size: 2rem;
-    font-weight: bolder;
-    color: #FFF;
-    margin-bottom: 6px;
-    text-shadow: 0 0 12px rgba(255, 255, 255, 0.5);
-}
-.subtitle {
-    text-align: center;
-    margin-bottom: 18px;
-    color: #FFF;
-    font-size: .95rem;
-    font-weight: 700;
-    text-shadow: 0 0 12px rgba(255, 255, 255, 0.3);
-}
-
-/* BOTÕES GENÉRICOS */
-button {
-    width: 100%;
-    border: none;
-    padding: 14px;
-    margin: 6px 0;
-    font-size: 1rem;
-    cursor: pointer;
-    border-radius: 14px;
-    background: linear-gradient(135deg, var(--green-soft), var(--terra));
-    color: #0b1220;
-    font-weight: 600;
-    position: relative;
-    overflow: hidden;
-    transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
-}
-button:hover {
-    transform: translateY(-1px) scale(1.01);
-    box-shadow: 0 10px 22px rgba(0,0,0,0.6);
-    filter: brightness(1.05);
-}
-button:active {
-    transform: translateY(1px) scale(0.99);
-}
-
-/* efeito ripple */
-button::after {
-    content: "";
-    position: absolute;
-    width: 10px;
-    height: 10px;
-    background: rgba(255,255,255,0.4);
-    border-radius: 999px;
-    transform: scale(0);
-    opacity: 0;
-    pointer-events: none;
-}
-button:active::after {
-    transform: scale(18);
-    opacity: 0;
-    transition: transform 0.45s ease-out, opacity 0.45s ease-out;
-}
-
-/* HUD TOPO */
-.top-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 14px;
-    gap: 10px;
-}
-
-/* VIDAS */
-.lives {
-    font-size: 1.7rem;
-    letter-spacing: 2px;
-}
-
-/* batida constante */
-.lives-beat {
-    animation: heartbeat 1.4s infinite;
-}
-@keyframes heartbeat {
-    0% { transform: scale(1); }
-    25% { transform: scale(1.06); }
-    40% { transform: scale(1); }
-    60% { transform: scale(1.06); }
-    100% { transform: scale(1); }
-}
-
-/* batida forte ao perder vida */
-.lives-hit {
-    animation: hit 0.35s ease;
-}
-@keyframes hit {
-    0% { transform: scale(1); }
-    30% { transform: scale(1.22); }
-    100% { transform: scale(1); }
-}
-
-/* PROGRESSO */
-.progress-wrap {
-    flex: 1;
-}
-
-.progress-label {
-    font-size: .7rem;
-    color: #FFF;
-    margin-bottom: 3px;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-}
-
-.progress {
-    width: 100%;
-    height: 9px;
-    border-radius: 999px;
-    background: rgba(15,23,42,0.90);
-    overflow: hidden;
-    box-shadow: 0 0 0 1px rgba(148,163,184,0.3);
-}
-.progress-bar {
-    height: 100%;
-    width: 0%;
-    background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple));
-    box-shadow: 0 0 12px rgba(62,246,255,0.7);
-    transition: width .45s ease;
-}
-
-/* SCORE / NIVEL */
-.score-row {
-    display: flex;
-    justify-content: space-between;
-    font-size: .8rem;
-    font-weight: bold;
-    color: #FFF;
-    margin-bottom: 12px;
-}
-.score-row span strong {
-    color: #FFF;
-    font-weight: bold;
-}
-
-/* AVATAR HUD */
-.avatar {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 10px 12px;
-    border-radius: 14px;
-    background: linear-gradient(135deg, rgba(15,23,42,0.95), rgba(12,20,30,0.9));
-    border: 1px solid rgba(148,163,184,0.35);
-    margin-bottom: 16px;
-    box-shadow: 0 0 12px rgba(15,23,42,0.85);
-}
-.avatar-face {
-    width: 46px;
-    height: 46px;
-    border-radius: 14px;
-    background: radial-gradient(circle at 30% 20%, var(--neon-cyan), var(--neon-purple));
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.7rem;
-    box-shadow: 0 0 18px rgba(62,246,255,0.7);
-}
-.avatar-text-title {
-    font-size: .78rem;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: #FFF;
-}
-.avatar-text-msg {
-    font-size: .9rem;
-}
-
-/* animação avatar trocar reação */
-.avatar-animate {
-    animation: avatarPop .35s ease;
-}
-@keyframes avatarPop {
-    0% { transform: translateY(6px); opacity: 0; }
-    100% { transform: translateY(0); opacity: 1; }
-}
-
-/* PERGUNTA */
-#qTitle {
-    font-weight: 600;
-    margin-bottom: 4px;
-    color: #FFF;
-}
-#qText {
-    margin-bottom: 12px;
-    color: #FFF;
-    font-size: .96rem;
-}
-
-/* ALTERNATIVAS */
-.alt-btn {
-    text-align: left;
-    padding-inline: 16px;
-    color: #FFF;
-}
-
-.btnInitial {
-    color: #FFF;
-    text-shadow: 0 0 12px rgba(255, 255, 255, 0.4);
-}
-
-/* cores correto/errado */
-.alt-btn.correct {
-    background: linear-gradient(135deg, #4ade80, #22c55e) !important;
-    box-shadow: 0 0 16px rgba(34,197,94,0.9);
-    color: #022c22;
-}
-.alt-btn.wrong {
-    background: linear-gradient(135deg, #f97373, #ef4444) !important;
-    box-shadow: 0 0 16px rgba(248,113,113,0.9);
-    color: #450a0a;
-}
-
-.game {
-    max-height: none;
-    height: auto;
-    overflow: visible;
-}
-
-/* shake quando erra */
-.shake {
-    animation: shake 0.35s ease;
-}
-@keyframes shake {
-    0% { transform: translateX(0); }
-    25% { transform: translateX(-4px); }
-    50% { transform: translateX(4px); }
-    75% { transform: translateX(-3px); }
-    100% { transform: translateX(0); }
-}
-
-/* INPUT TEXTO */
-#txtAnswer {
-    width: 100%;
-    padding: 13px;
-    border-radius: 14px;
-    border: 2px solid rgba(148,163,184,0.6);
-    background: rgba(15,23,42,0.9);
-    color: #e5e7eb;
-    font-size: .98rem;
-    margin: 8px 0 6px;
-}
-
-/* TELA FINAL */
-#endMessage {
-    text-align: center;
-    margin-bottom: 18px;
-    font-size: 1.1rem;
-}
-
-/* FEEDBACK TOAST */
-.feedback {
-    position: fixed;
-    top: 16px;
-    left: 50%;
-    transform: translateX(-50%) translateY(-10px);
-    padding: 10px 18px;
-    border-radius: 999px;
-    font-weight: 600;
-    color: #0b1120;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity .35s, transform .35s;
-    z-index: 20;
-    box-shadow: 0 12px 22px rgba(0,0,0,0.65);
-    backdrop-filter: blur(18px);
-    border: 1px solid rgba(148,163,184,0.4);
-    background: linear-gradient(135deg, #bbf7d0, #4ade80);
-}
-.feedback.error {
-    background: linear-gradient(135deg, #fecaca, #f97373);
-}
-.feedback.show {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-}
-
-/* FLASH DE ACERTO NA TELA */
-.flash-correct {
-    animation: flashGreen .4s ease;
-}
-@keyframes flashGreen {
-    0%   { box-shadow: 0 0 0 0 rgba(34,197,94,0.0); }
-    50%  { box-shadow: 0 0 0 6px rgba(34,197,94,0.4); }
-    100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.0); }
-}
-
-@media (max-width: 768px) {
-    body {
-        width: 95%;
-        margin: 1rem auto;
-    }
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="images/bones.png" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&family=Google+Sans+Code:ital,wght@0,300..800;1,300..800&family=Inconsolata:wght@200..900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <script src="script.js" defer></script>
+    <link rel="stylesheet" href="styles.css">
+    <title>Quiz Gamer - Artrite Psoriásica</title>
 </head>
 
 <body>
 
-<!-- partículas gamer -->
-<script>
-for(let i=0;i<18;i++){
-  const p = document.createElement('div');
-  p.className = 'particle';
-  p.style.left = Math.random()*100 + 'vw';
-  p.style.animationDuration = (5 + Math.random()*4) + 's';
-  p.style.opacity = 0.2 + Math.random()*0.4;
-  document.body.appendChild(p);
-}
-</script>
+    <!-- partículas gamer -->
+    <script>
+        for (let i = 0; i < 18; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            p.style.left = Math.random() * 100 + 'vw';
+            p.style.animationDuration = (5 + Math.random() * 4) + 's';
+            p.style.opacity = 0.2 + Math.random() * 0.4;
+            document.body.appendChild(p);
+        }
+    </script>
 
-<div class="game" id="gameCard">
+    <div class="game" id="gameCard">
 
-    <!-- TELA INICIAL -->
-    <div id="startScreen" class="screen active">
-        <h1>Quiz Gamer</h1>
-        <p class="subtitle">Artrite Psoriásica • Prepare-se para o game! 🧠🎮</p>
-        <button class="btnInitial" onclick="startGame(event)">Iniciar missão</button>
-    </div>
+        <!-- TELA INICIAL -->
+        <div id="startScreen" class="screen active">
+            <div class="cardMain">
+                <h1>Quiz Gamer</h1>
+                <p class="subtitle">Artrite Psoriásica<img src="images/artrite.png" alt="artrite"></p>
+                <p class="subtitle">Prepare-se para o game! 🧠🎮</p>
+                <button class="btnInitial" onclick="startGame(event)">Iniciar missão</button>
+            </div>
+        </div>
 
-    <!-- HUD / GAMEPLAY -->
-    <div id="hud" class="screen">
+        <!-- HUD / GAMEPLAY -->
+        <div id="hud" class="screen">
 
-        <div class="top-row">
-            <div class="lives lives-beat" id="lives">❤️❤️❤️</div>
+            <div class="top-row">
+                <div class="all">
+                    <div class="lives lives-beat" id="lives">❤️❤️❤️</div>
 
-            <div class="progress-wrap">
-                <div class="progress-label" id="progressLabel">Pergunta 1 de 5</div>
-                <div class="progress">
-                    <div class="progress-bar" id="progressBar"></div>
+                    <div class="progress-wrap">
+                        <div class="progress-label" id="progressLabel">Pergunta 1 de 5</div>
+                        <div class="progress">
+                            <div class="progress-bar" id="progressBar"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="score-row">
+                    <span>Nível: <strong id="levelText">1</strong></span>
+                    <span>Pontos: <strong id="scoreText">0</strong></span>
+                </div>
+            </div>
+
+            <!-- Avatar -->
+            <div class="avatar" id="avatar">
+                <div class="avatar-face" id="avatarFace">🙂</div>
+                <div>
+                    <div class="avatar-text-title">Zeca</div>
+                    <div class="avatar-text-msg" id="avatarText">Pronto para começar a missão?</div>
+                </div>
+            </div>
+
+            <div class="boxModel">
+                <!-- Pergunta -->
+                <h3 id="qTitle"></h3>
+                <p id="qText"></p>
+
+                    <!-- Alternativas -->
+                    <div id="options"></div>
+                
+                <!-- Pergunta de texto -->
+                <div id="textMode" style="display:none;">
+                    <input id="txtAnswer" placeholder="Digite sua resposta..." />
+                    <button onclick="checkText(event)">Enviar resposta</button>
                 </div>
             </div>
         </div>
 
-        <div class="score-row">
-            <span>Nível: <strong id="levelText">1</strong></span>
-            <span>Pontos: <strong id="scoreText">0</strong></span>
+        <!-- TELA FINAL -->
+        <div id="endScreen" class="screen">
+            <p id="endMessage"></p>
+            <button onclick="restart(event)">Reiniciar missão</button>
         </div>
 
-        <!-- Avatar -->
-        <div class="avatar" id="avatar">
-            <div class="avatar-face" id="avatarFace">🙂</div>
-            <div>
-                <div class="avatar-text-title">Zeca</div>
-                <div class="avatar-text-msg" id="avatarText">Pronto para começar a missão.</div>
-            </div>
-        </div>
-
-        <!-- Pergunta -->
-        <h3 id="qTitle"></h3>
-        <p id="qText"></p>
-
-        <!-- Alternativas -->
-        <div id="options"></div>
-
-        <!-- Pergunta de texto -->
-        <div id="textMode" style="display:none;">
-            <input id="txtAnswer" placeholder="Digite sua resposta..." />
-            <button onclick="checkText(event)">Enviar resposta</button>
-        </div>
     </div>
 
-    <!-- TELA FINAL -->
-    <div id="endScreen" class="screen">
-        <p id="endMessage"></p>
-        <button onclick="restart(event)">Reiniciar missão</button>
-    </div>
-
-</div>
-
-<!-- FEEDBACK (toast de acerto/erro) -->
-<div id="feedback" class="feedback"></div>
-
-<!-- SONS (coloque os arquivos na mesma pasta: correct.mp3 e wrong.mp3) -->
-<audio id="sndCorrect" src="correct.mp3" preload="auto"></audio>
-<audio id="sndWrong"   src="wrong.mp3"   preload="auto"></audio>
-
-<script>
-const questions = [
-    {
-        title:"1️⃣ Entendendo a Artrite Psoriásica",
-        text:"A artrite psoriásica é caracterizada principalmente por:",
-        type:"choice",
-        options:[
-            "Inflamação articular associada à psoríase",
-            "Desgaste ósseo sem relação com a pele"
-        ],
-        correct:0
-    },
-    {
-        title:"2️⃣ Psoríase e Autoestima",
-        text:"Entre os impactos psicossociais da psoríase, destaca-se:",
-        type:"choice",
-        options:[
-            "Melhora da interação social",
-            "Diminuição automática da ansiedade",
-            "Aumento inevitável da confiança",
-            "Redução da autoestima"
-        ],
-        correct:3
-    },
-    {
-        title:"3️⃣ Papel da Fisioterapia Dermatofuncional",
-        text:"Complete a palavra (dica: melhorar o movimento): M_B_L_D_D_",
-        type:"text",
-        correct:"MOBILIDADE"
-    },
-    {
-        title:"4️⃣ Abordagens e Técnicas Utilizadas",
-        text:"A crioterapia é frequentemente utilizada porque:",
-        type:"choice",
-        options:[
-            "Aumenta a temperatura local",
-            "Reduz dor e inflamação",
-        ],
-        correct:1
-    },
-    {
-        title:"5️⃣ Incidência e Epidemiologia",
-        text:"A artrite psoriásica é mais comum em:",
-        type:"choice",
-        options:[
-            "Pessoas com diagnóstico prévio de psoríase",
-            "Pessoas sem histórico de psoríase"
-        ],
-        correct:0
-    }
-];
-
-let index = 0;
-let lives = 3;
-let score = 0;
-
-// elementos
-const startScreen  = document.getElementById("startScreen");
-const hud          = document.getElementById("hud");
-const endScreen    = document.getElementById("endScreen");
-const livesEl      = document.getElementById("lives");
-const qTitle       = document.getElementById("qTitle");
-const qText        = document.getElementById("qText");
-const optionsArea  = document.getElementById("options");
-const textMode     = document.getElementById("textMode");
-const txtAnswer    = document.getElementById("txtAnswer");
-const progressBar  = document.getElementById("progressBar");
-const progressLabel= document.getElementById("progressLabel");
-const feedback     = document.getElementById("feedback");
-const endMessage   = document.getElementById("endMessage");
-const avatarFace   = document.getElementById("avatarFace");
-const avatarText   = document.getElementById("avatarText");
-const sndCorrect   = document.getElementById("sndCorrect");
-const sndWrong     = document.getElementById("sndWrong");
-const scoreText    = document.getElementById("scoreText");
-const levelText    = document.getElementById("levelText");
-const gameCard     = document.getElementById("gameCard");
-
-function ripple(event){
-    const btn = event.currentTarget;
-    const rect = btn.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
-    btn.style.setProperty("--ripple-x", x + "px");
-    btn.style.setProperty("--ripple-y", y + "px");
-}
-
-function setScreen(activeId){
-    [startScreen, hud, endScreen].forEach(el=>{
-        el.classList.remove("active");
-    });
-    document.getElementById(activeId).classList.add("active");
-}
-
-function startGame(e){
-    if(e) ripple(e);
-    index = 0;
-    lives = 3;
-    score = 0;
-    updateLives(true);
-    updateScore();
-    setAvatar("neutral");
-    setScreen("hud");
-    loadQuestion();
-}
-
-function loadQuestion(){
-    const q = questions[index];
-    qTitle.textContent = q.title;
-    qText.textContent  = q.text;
-
-    updateProgress();
-
-    optionsArea.innerHTML = "";
-    textMode.style.display = "none";
-
-    if(q.type === "choice"){
-        q.options.forEach((opt,i)=>{
-            const btn = document.createElement("button");
-            btn.textContent = opt;
-            btn.className = "alt-btn";
-            btn.onclick = (ev)=> { ripple(ev); checkChoice(i, btn); };
-            optionsArea.appendChild(btn);
-        });
-    } else {
-        textMode.style.display = "block";
-        txtAnswer.value = "";
-        txtAnswer.focus();
-    }
-}
-
-function updateProgress(){
-    const total = questions.length;
-    const current = index + 1;
-    const percent = (current - 1) / total * 100;
-    progressBar.style.width = percent + "%";
-    progressLabel.textContent = `Pergunta ${current} de ${total}`;
-    levelText.textContent = Math.max(1, current);
-}
-
-function updateLives(resetAnimation=false){
-    livesEl.textContent = "❤️".repeat(lives);
-    if(resetAnimation){
-        livesEl.classList.add("lives-beat");
-    }
-    livesEl.classList.remove("lives-hit");
-    void livesEl.offsetWidth;
-    livesEl.classList.add("lives-hit");
-}
-
-function updateScore(){
-    scoreText.textContent = score;
-}
-
-function showFeedback(msg, isError=false){
-    feedback.textContent = msg;
-    feedback.classList.toggle("error", isError);
-    feedback.classList.add("show");
-    setTimeout(()=> feedback.classList.remove("show"), 1200);
-}
-
-function setAvatar(state){
-    avatarFace.classList.add("avatar-animate");
-    setTimeout(()=> avatarFace.classList.remove("avatar-animate"), 350);
-
-    if(state === "happy"){
-        avatarFace.textContent = "😎";
-        avatarText.textContent = "Excelente! Continue assim.";
-    } else if(state === "sad"){
-        avatarFace.textContent = "😢";
-        avatarText.textContent = "Tudo bem, tente novamente!";
-    } else { // neutral
-        avatarFace.textContent = "🙂";
-        avatarText.textContent = "Pronto para a próxima pergunta.";
-    }
-}
-
-function playSound(sound){
-    if(!sound) return;
-    try{
-        sound.currentTime = 0;
-        sound.play();
-    }catch(e){
-        // navegador pode bloquear autoplay; tudo bem
-    }
-}
-
-function checkChoice(i, btn){
-    const q = questions[index];
-
-    const allButtons = document.querySelectorAll(".alt-btn");
-    allButtons.forEach(b => b.disabled = true);
-
-    if(i === q.correct){
-        btn.classList.add("correct");
-        setAvatar("happy");
-        showFeedback("✔ Acertou! +10 pontos", false);
-        playSound(sndCorrect);
-        score += 10;
-        updateScore();
-
-        // flash verde na HUD
-        gameCard.classList.add("flash-correct");
-        setTimeout(()=> gameCard.classList.remove("flash-correct"), 400);
-
-        setTimeout(nextQuestion, 950);
-    } else {
-        btn.classList.add("wrong");
-        setAvatar("sad");
-        showFeedback("✘ Errou! -1 vida", true);
-        playSound(sndWrong);
-        gameCard.classList.add("shake");
-        setTimeout(()=> gameCard.classList.remove("shake"), 350);
-        loseLife();
-        setTimeout(nextQuestion, 3000);
-
-        /* if(lives > 0){
-            setTimeout(() => allButtons.forEach(b => {
-                if(!b.classList.contains("wrong")){
-                    b.disabled = false;
-                }
-            }), 400);
-        } */
-    }
-}
-
-function checkText(e){
-    if(e) ripple(e);
-    const answer = txtAnswer.value.toUpperCase().trim();
-    const correct = questions[index].correct;
-
-    if(answer === correct){
-        setAvatar("happy");
-        showFeedback("✔ Correto! +10 pontos", false);
-        playSound(sndCorrect);
-        score += 10;
-        updateScore();
-        gameCard.classList.add("flash-correct");
-        setTimeout(()=> gameCard.classList.remove("flash-correct"), 400);
-        setTimeout(nextQuestion, 900);
-    } else {
-        setAvatar("sad");
-        showFeedback("✘ Não foi dessa vez! -1 vida", true);
-        playSound(sndWrong);
-        gameCard.classList.add("shake");
-        setTimeout(()=> gameCard.classList.remove("shake"), 350);
-        loseLife();
-    }
-}
-
-function loseLife(){
-    lives--;
-    if(lives < 0) lives = 0;
-    updateLives();
-    if(lives <= 0){
-        endGame(false);
-    }
-}
-
-function nextQuestion(){
-    index++;
-    if(index >= questions.length){
-        endGame(true);
-    } else {
-        setAvatar("neutral");
-        loadQuestion();
-    }
-}
-
-function endGame(win){
-    setScreen("endScreen");
-    if(win){
-        endMessage.innerHTML = `🎉 <strong>Missão concluída!</strong><br>Você fez <strong>${score} pontos</strong> e completou todas as perguntas.`;
-    } else {
-        endMessage.innerHTML = `💔 <strong>Missão falhou!</strong><br>Suas vidas acabaram. Pontuação final: <strong>${score}</strong>.`;
-    }
-}
-
-function restart(e){
-    if(e) ripple(e);
-    setScreen("startScreen");
-}
-</script>
-
+    <!-- FEEDBACK (toast de acerto/erro) -->
+    <div id="feedback" class="feedback"></div>
 </body>
+
 </html>
