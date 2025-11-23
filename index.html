@@ -37,7 +37,9 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: rgb(223, 174, 134);
+    background-image: url('background.jpg');
+    background-size: cover;
+    background-position: center;
     position: relative;
 }
 
@@ -46,8 +48,10 @@ body::before {
     content: "";
     position: fixed;
     inset: 0;
-    background-color: rgb(223, 174, 134);
+    background-image: url('background.jpg');
     background-size: cover;
+    background-position: center;
+    background: rgba(0,0,0,0.6);
     transform: scale(1.05);
     z-index: -99;
 }
@@ -89,7 +93,9 @@ body::after {
     max-width: 560px;
     padding: 1rem;
     border-radius: 22px;
-    background: url('background.jpg') center/cover no-repeat;
+    background: url('background.jpg');
+    background-position: center;
+    /* background: url('background.jpg') center/cover no-repeat; */
     color: #f4f4f4; /* texto fica claro e visível */
     position: relative;
     isolation: isolate; /* garante que o overlay fique atrás */
@@ -100,30 +106,10 @@ body::after {
     content: "";
     position: absolute;
     inset: 0;
-    background: rgba(0,0,0,0.45); /* ESCURECE O FUNDO */
+    background: rgba(0,0,0,0.3); /* ESCURECE O FUNDO */
     border-radius: 22px;
     z-index: -1;
 }
-
-/* bordas luz neon */
-/* .game::before,
-.game::after {
-    content: "";
-    position: absolute;
-    inset: -1px;
-    border-radius: 22px;
-    border: 1px solid transparent;
-    background: linear-gradient(135deg, rgba(62,246,255,0.4), rgba(181,124,255,0.4));
-    -webkit-mask: linear-gradient(#000 0 0) padding-box, linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    opacity: 0.4;
-    pointer-events: none;
-}
-.game::after {
-    filter: blur(12px);
-    opacity: 0.65;
-} */
 
 /* TELAS (transição) */
 .screen {
@@ -144,7 +130,7 @@ h1 {
     font-weight: bolder;
     color: #FFF;
     margin-bottom: 6px;
-    text-shadow: 0 0 12px rgba(255, 255, 255, 1);
+    text-shadow: 0 0 12px rgba(255, 255, 255, 0.5);
 }
 .subtitle {
     text-align: center;
@@ -152,6 +138,7 @@ h1 {
     color: #FFF;
     font-size: .95rem;
     font-weight: 700;
+    text-shadow: 0 0 12px rgba(255, 255, 255, 0.3);
 }
 
 /* BOTÕES GENÉRICOS */
@@ -340,6 +327,7 @@ button:active::after {
 
 .btnInitial {
     color: #FFF;
+    text-shadow: 0 0 12px rgba(255, 255, 255, 0.4);
 }
 
 /* cores correto/errado */
