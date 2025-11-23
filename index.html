@@ -37,7 +37,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: #020617;
+    background: rgb(223, 174, 134);
     position: relative;
 }
 
@@ -46,10 +46,10 @@ body::before {
     content: "";
     position: fixed;
     inset: 0;
-    background-image: url("background.jpg");
+    background-color: rgb(223, 174, 134);
     background-size: cover;
     transform: scale(1.05);
-    z-index: -3;
+    z-index: -99;
 }
 
 /* overlay gamer */
@@ -57,10 +57,6 @@ body::after {
     content: "";
     position: fixed;
     inset: 0;
-    background:
-        radial-gradient(circle at 10% 10%, rgba(62,246,255,0.25), transparent 55%),
-        radial-gradient(circle at 90% 90%, rgba(181,124,255,0.25), transparent 55%),
-        linear-gradient(135deg, rgba(2,6,23,0.9), rgba(15,23,42,0.95));
     mix-blend-mode: soft-light;
     animation: bgMove 22s infinite alternate ease-in-out;
     z-index: -2;
@@ -76,7 +72,7 @@ body::after {
     position: fixed;
     width: 2px;
     height: 30px;
-    background: linear-gradient(to bottom, rgba(62,246,255,0.3), rgba(62,246,255,0));
+    background: linear-gradient(to bottom, rgba(255,255,255,0.9), rgba(255,255,255,0.9));
     opacity: 0.7;
     animation: rain 6s linear infinite;
     z-index: -1;
@@ -87,25 +83,30 @@ body::after {
 }
 
 /* CARD PRINCIPAL (HUD GAMER) */
-.game {
+
+    .game {
     width: 100%;
     max-width: 560px;
-    max-height: 70vh;
-    overflow-y: auto;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(255,255,255,0.2) transparent;
     padding: 1rem;
     border-radius: 22px;
-    background: var(--hud-bg);
-    box-shadow:
-        0 0 0 1px rgba(148, 163, 184, 0.45),
-        0 18px 40px rgba(0,0,0,0.65);
-    color: #e5e7eb;
+    background: url('background.jpg') center/cover no-repeat;
+    color: #f4f4f4; /* texto fica claro e visível */
     position: relative;
+    isolation: isolate; /* garante que o overlay fique atrás */
+}
+
+
+.game::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.45); /* ESCURECE O FUNDO */
+    border-radius: 22px;
+    z-index: -1;
 }
 
 /* bordas luz neon */
-.game::before,
+/* .game::before,
 .game::after {
     content: "";
     position: absolute;
@@ -122,7 +123,7 @@ body::after {
 .game::after {
     filter: blur(12px);
     opacity: 0.65;
-}
+} */
 
 /* TELAS (transição) */
 .screen {
@@ -139,16 +140,18 @@ body::after {
 
 h1 {
     text-align: center;
-    font-size: 1.9rem;
-    color: var(--neon-cyan);
+    font-size: 2rem;
+    font-weight: bolder;
+    color: #FFF;
     margin-bottom: 6px;
-    text-shadow: 0 0 12px rgba(62, 246, 255, 0.6);
+    text-shadow: 0 0 12px rgba(255, 255, 255, 1);
 }
 .subtitle {
     text-align: center;
     margin-bottom: 18px;
-    color: #cbd5f5;
+    color: #FFF;
     font-size: .95rem;
+    font-weight: 700;
 }
 
 /* BOTÕES GENÉRICOS */
@@ -238,7 +241,7 @@ button:active::after {
 
 .progress-label {
     font-size: .7rem;
-    color: #9ca3af;
+    color: #FFF;
     margin-bottom: 3px;
     text-transform: uppercase;
     letter-spacing: 0.08em;
@@ -265,11 +268,13 @@ button:active::after {
     display: flex;
     justify-content: space-between;
     font-size: .8rem;
-    color: #9ca3af;
+    font-weight: bold;
+    color: #FFF;
     margin-bottom: 12px;
 }
 .score-row span strong {
-    color: #e5e7eb;
+    color: #FFF;
+    font-weight: bold;
 }
 
 /* AVATAR HUD */
@@ -299,7 +304,7 @@ button:active::after {
     font-size: .78rem;
     text-transform: uppercase;
     letter-spacing: 0.12em;
-    color: #9ca3af;
+    color: #FFF;
 }
 .avatar-text-msg {
     font-size: .9rem;
@@ -318,11 +323,11 @@ button:active::after {
 #qTitle {
     font-weight: 600;
     margin-bottom: 4px;
-    color: #e5e7eb;
+    color: #FFF;
 }
 #qText {
     margin-bottom: 12px;
-    color: #d1d5db;
+    color: #FFF;
     font-size: .96rem;
 }
 
@@ -330,7 +335,11 @@ button:active::after {
 .alt-btn {
     text-align: left;
     padding-inline: 16px;
-    color: #0b1220;
+    color: #FFF;
+}
+
+.btnInitial {
+    color: #FFF;
 }
 
 /* cores correto/errado */
@@ -447,8 +456,8 @@ for(let i=0;i<18;i++){
     <!-- TELA INICIAL -->
     <div id="startScreen" class="screen active">
         <h1>Quiz Gamer</h1>
-        <p class="subtitle">Artrite Psoriásica • Teste seus conhecimentos em modo HUD gamer. 🧠🎮</p>
-        <button onclick="startGame(event)">Iniciar missão</button>
+        <p class="subtitle">Artrite Psoriásica • Prepare-se para o game! 🧠🎮</p>
+        <button class="btnInitial" onclick="startGame(event)">Iniciar missão</button>
     </div>
 
     <!-- HUD / GAMEPLAY -->
@@ -526,11 +535,11 @@ const questions = [
         type:"choice",
         options:[
             "Melhora da interação social",
-            "Redução da autoestima",
+            "Diminuição automática da ansiedade",
             "Aumento inevitável da confiança",
-            "Diminuição automática da ansiedade"
+            "Redução da autoestima"
         ],
-        correct:1
+        correct:3
     },
     {
         title:"3️⃣ Papel da Fisioterapia Dermatofuncional",
@@ -543,10 +552,10 @@ const questions = [
         text:"A crioterapia é frequentemente utilizada porque:",
         type:"choice",
         options:[
+            "Aumenta a temperatura local",
             "Reduz dor e inflamação",
-            "Aumenta a temperatura local"
         ],
-        correct:0
+        correct:1
     },
     {
         title:"5️⃣ Incidência e Epidemiologia",
